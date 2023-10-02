@@ -1044,6 +1044,8 @@ Device::Set(uint16_t idx, uint8_t subidx, const void* p, ::std::size_t n,
   impl_->Set<CO_DEFTYPE_OCTET_STRING>(idx, subidx, p, n, ec);
 }
 
+#if !LELY_NO_CO_OBJ_FILE
+
 const char*
 Device::GetUploadFile(uint16_t idx, uint8_t subidx) const {
   ::std::error_code ec;
@@ -1159,6 +1161,8 @@ Device::SetDownloadFile(uint16_t idx, uint8_t subidx, const char* filename,
     ec = util::make_error_code();
   set_errc(errsv);
 }
+
+#endif  // !LELY_NO_CO_OBJ_FILE
 
 void
 Device::SetEvent(uint16_t idx, uint8_t subidx) {
