@@ -529,27 +529,7 @@ co_emcy_pop(co_emcy_t *emcy, co_unsigned16_t *peec, co_unsigned8_t *per)
 
 	co_emcy_peek(emcy, peec, per);
 
-	if (!emcy->nmsg)
-		return 0;
-
-	// Move the older messages.
-	if (--emcy->nmsg)
-		memmove(emcy->msgs, emcy->msgs + 1,
-				emcy->nmsg * sizeof(struct co_emcy_msg));
-
-	// Update the pre-defined error field.
-	if (emcy->obj_1003)
-		co_emcy_set_1003(emcy);
-
-	if (emcy->nmsg) {
-		// Store the next error in the error register and the
-		// manufacturer-specific field.
-		co_unsigned8_t msef[5] = { 0 };
-		stle_u16(msef, emcy->msgs[0].eec);
-		return co_emcy_send(emcy, 0, emcy->msgs[0].er, msef);
-	} else {
-		return co_emcy_send(emcy, 0, 0, NULL);
-	}
+	return co_emcy_remove(emcy, 0);
 }
 
 void
@@ -566,6 +546,49 @@ co_emcy_peek(const co_emcy_t *emcy, co_unsigned16_t *peec, co_unsigned8_t *per)
 			er |= emcy->msgs[i].er;
 		*per = er;
 	}
+}
+int
+co_emcy_remove(co_emcy_t *emcy, size_t n)
+{
+	assert(emcy);
+
+	if (n >= emcy->nmsg)
+		return 0;
+
+	// Move the older messages.
+	if (--emcy->nmsg)
+		memmove(emcy->msgs + n, emcy->msgs + n + 1,
+				(emcy->nmsg - n) * sizeof(struct co_emcy_msg));
+
+	// Update the pre-defined error field.
+	if (emcy->obj_1003)
+		co_emcy_set_1003(emcy);
+
+	if (emcy->nmsg) {
+		// Store the most recent error in the error register and the
+		// manufacturer-specific field.
+		co_unsigned16_t eec = 0;
+		co_unsigned8_t er = 0;
+		co_emcy_peek(emcy, &eec, &er);
+		co_unsigned8_t msef[5] = { 0 };
+		stle_u16(msef, eec);
+		return co_emcy_send(emcy, 0, er, msef);
+	} else {
+		return co_emcy_send(emcy, 0, 0, NULL);
+	}
+}
+
+ssize_t
+co_emcy_find(const co_emcy_t *emcy, co_unsigned16_t eec)
+{
+	assert(emcy);
+
+	for (size_t i = 0; i < emcy->nmsg; i++) {
+		if (emcy->msgs[i].eec == eec)
+			return i;
+	}
+
+	return -1;
 }
 
 int
