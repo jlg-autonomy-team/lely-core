@@ -4,7 +4,7 @@
  *
  * @see lely/co/emcy.h
  *
- * @copyright 2017-2023 Lely Industries N.V.
+ * @copyright 2017-2024 Lely Industries N.V.
  *
  * @author J. S. Seldenthuis <jseldenthuis@lely.com>
  *
@@ -503,13 +503,10 @@ co_emcy_push(co_emcy_t *emcy, co_unsigned16_t eec, co_unsigned8_t er,
 	emcy->msgs = msgs;
 #endif
 
-	if (emcy->nmsg) {
-		// Copy the current error register.
-		er |= emcy->msgs[0].er;
-		// Move the older messages.
+	// Move the older messages.
+	if (emcy->nmsg)
 		memmove(emcy->msgs + 1, emcy->msgs,
 				emcy->nmsg * sizeof(struct co_emcy_msg));
-	}
 	emcy->nmsg++;
 	// Push the error to the stack.
 	emcy->msgs[0].eec = eec;
@@ -518,6 +515,9 @@ co_emcy_push(co_emcy_t *emcy, co_unsigned16_t eec, co_unsigned8_t er,
 	// Update the pre-defined error field.
 	if (emcy->obj_1003)
 		co_emcy_set_1003(emcy);
+
+	// Obtain the new (combined) error register.
+	co_emcy_peek(emcy, NULL, &er);
 
 	return co_emcy_send(emcy, eec, er, msef);
 }
@@ -559,8 +559,13 @@ co_emcy_peek(const co_emcy_t *emcy, co_unsigned16_t *peec, co_unsigned8_t *per)
 
 	if (peec)
 		*peec = emcy->nmsg ? emcy->msgs[0].eec : 0;
-	if (per)
-		*per = emcy->nmsg ? emcy->msgs[0].er : 0;
+	if (per) {
+		co_unsigned8_t er = 0;
+		// Compute the combined error register.
+		for (size_t i = 0; i < emcy->nmsg; i++)
+			er |= emcy->msgs[i].er;
+		*per = er;
+	}
 }
 
 int
