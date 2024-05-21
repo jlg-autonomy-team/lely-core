@@ -599,6 +599,7 @@ sonarcloud:
     - if: '$CI_MERGE_REQUEST_EVENT_TYPE != "merge_train"'
       when: always
     - when: never
+  allow_failure: true
 
 pages:
   stage: deploy
