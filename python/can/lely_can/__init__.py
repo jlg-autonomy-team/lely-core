@@ -1,8 +1,8 @@
 """Python bindings for the Lely CAN library."""
 
-__copyright__ = '2023 Lely Industries N.V.'
+__copyright__ = '2024 Lely Industries N.V.'
 __author__ = 'J. S. Seldenthuis <jseldenthuis@lely.com>'
-__version__ = '2.1.11'
+__version__ = '2.1.12'
 __license__ = 'Apache-2.0'
 
 from lely_can.err import *
