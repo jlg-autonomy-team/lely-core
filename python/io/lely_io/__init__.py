@@ -1,8 +1,8 @@
 """Python bindings for the Lely I/O library."""
 
-__copyright__ = '2023 Lely Industries N.V.'
+__copyright__ = '2024 Lely Industries N.V.'
 __author__ = 'J. S. Seldenthuis <jseldenthuis@lely.com>'
-__version__ = '2.3.3'
+__version__ = '2.3.4'
 __license__ = 'Apache-2.0'
 
 from lely_io.addr import *

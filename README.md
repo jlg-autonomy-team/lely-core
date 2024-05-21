@@ -95,7 +95,7 @@ found [here](http://lely_industries.gitlab.io/lely-core/doxygen/).
 
 ## Licensing
 
-Copyright 2013-2023 [Lely Industries N.V.](http://www.lely.com)
+Copyright 2013-2024 [Lely Industries N.V.](http://www.lely.com)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
