@@ -3618,17 +3618,17 @@ co_nmt_startup_master(co_nmt_t *nmt)
 	// Send the NMT 'reset communication' command to all slaves with
 	// the keep-alive bit _not_ set. This includes slaves which are not in
 	// the network list.
-	if (keep) {
-		for (co_unsigned8_t id = 1; id <= CO_NUM_NODES; id++) {
-			// Do not reset the master itself.
-			if (id == co_dev_get_id(nmt->dev))
-				continue;
-			if ((nmt->slaves[id - 1].assignment & 0x11) != 0x11)
-				co_nmt_cs_req(nmt, CO_NMT_CS_RESET_COMM, id);
-		}
-	} else {
-		co_nmt_cs_req(nmt, CO_NMT_CS_RESET_COMM, 0);
-	}
+	// if (keep) {
+	// 	for (co_unsigned8_t id = 1; id <= CO_NUM_NODES; id++) {
+	// 		// Do not reset the master itself.
+	// 		if (id == co_dev_get_id(nmt->dev))
+	// 			continue;
+	// 		if ((nmt->slaves[id - 1].assignment & 0x11) != 0x11)
+	// 			co_nmt_cs_req(nmt, CO_NMT_CS_RESET_COMM, id);
+	// 	}
+	// } else {
+	// 	co_nmt_cs_req(nmt, CO_NMT_CS_RESET_COMM, 0);
+	// }
 
 	// Start the 'boot slave' processes.
 	switch (co_nmt_slaves_boot(nmt)) {
